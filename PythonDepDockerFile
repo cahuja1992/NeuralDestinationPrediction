@@ -1,0 +1,9 @@
+FROM python:3.6
+
+ARG proxy
+ENV http_proxy $proxy
+ENV https_proxy $proxy
+
+# Install dependencies
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
