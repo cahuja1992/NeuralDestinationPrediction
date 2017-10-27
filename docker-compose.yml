@@ -1,0 +1,17 @@
+version: '2'
+volumes:
+  modeldata: {} 
+  trainingdata: {}
+services:
+  app:
+    image: destination-pred/app
+    stdin_open: true
+    volumes:
+    - modeldata
+    tty: true
+
+  train:
+    image: destination-pred/model
+    stdin_open: true
+    volumes:
+    - trainingdata
