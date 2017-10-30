@@ -1,5 +1,7 @@
-ROOT_DIR = 'C:\\Users\\cahuja\\Documents\\Visteon\\P1-DestinationPrediction\\Documents\\src\\'
-DATA_DIR = 'C:\\Users\\cahuja\\Documents\\Visteon\\P1-DestinationPrediction\\Documents\\data\\trainingdata\\'
+import os
+
+ROOT_DIR = os.getenv("DESTPRED_HOME")
+DATA_DIR = os.getenv('DESTPRED_DATA', '/data/trainingdata/')
 
 # HyperParameters for Optimizer
 lr = 0.01

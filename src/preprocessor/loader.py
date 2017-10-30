@@ -147,7 +147,7 @@ class Data:
             LOG.info("Tranforming data")
             datasets = []
             for kind in ['train', 'test']:
-                csv_file = '{0}/{1}.csv'.format(DATA_DIR, kind)
+                csv_file = '{0}/trainingdata/{1}.csv'.format(DATA_DIR, kind)
                 df = pd.read_csv(csv_file, nrows=1000)
                 df = df[df['MISSING_DATA'] == False]
                 df = df[df['POLYLINE'] != '[]']
