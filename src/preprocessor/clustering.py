@@ -1,7 +1,7 @@
 import abc
 
 import pandas as pd
-import sklearn
+from sklearn.cluster import estimate_bandwidth, MeanShift
 
 
 class Clusters(object):
@@ -28,8 +28,8 @@ class MeanShiftClustering(Clusters):
         })
         clusters = clusters.drop_duplicates(['approx_latitudes', 'approx_longitudes'])
         clusters = clusters.as_matrix()
-        bandwidth = sklearn.cluster.estimate_bandwidth(clusters, quantile=0.0002)
-        self.clustering_model = sklearn.cluster.MeanShift(bandwidth=bandwidth, bin_seeding=True)
+        bandwidth = estimate_bandwidth(clusters, quantile=0.2)
+        self.clustering_model = MeanShift(bandwidth=bandwidth, bin_seeding=True)
         self.clustering_model.fit(clusters)
 
     def get_cluster_centroids(self):

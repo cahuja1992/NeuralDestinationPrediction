@@ -31,6 +31,10 @@ class Data:
         self.Y_test = None
         self.metadata = None
 
+    @property
+    def get_metadata(self):
+        return self.metadata
+
     @staticmethod
     def random_truncate(coords):
         if len(coords) <= 1:
@@ -89,16 +93,20 @@ class Data:
 
     @staticmethod
     def first_last_k(coords):
-        k = 5
-        partial = [coords[0] for i in range(2 * k)]
-        num_coords = len(coords)
-        if num_coords < 2 * k:
-            partial[-num_coords:] = coords
-        else:
-            partial[:k] = coords[:k]
-            partial[-k:] = coords[-k:]
-        partial = np.row_stack(partial)
-        return np.array(partial).flatten()
+        try:
+            k = 5
+            partial = [coords[0] for i in range(2 * k)]
+            num_coords = len(coords)
+            if num_coords < 2 * k:
+                partial[-num_coords:] = coords
+            else:
+                partial[:k] = coords[:k]
+                partial[-k:] = coords[-k:]
+            partial = np.row_stack(partial)
+            return np.array(partial).flatten()
+        except:
+            LOG.debug(type(coords))
+
 
     @staticmethod
     def get_features(df):
@@ -193,5 +201,5 @@ class Data:
         self.X_valid = Data.get_features(validation)
         self.Y_valid = validation_labels
         self.X_test = Data.get_features(test)
-        self.Y_test = Data.get_features(test_labels)
+        self.Y_test = test_labels
         self.metadata = metadata

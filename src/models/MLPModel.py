@@ -11,22 +11,23 @@ from keras.models import model_from_json
 from keras.optimizers import SGD
 from keras.utils.generic_utils import get_custom_objects
 
-from common.utils import haversine
+from common.utils import haversine_tf
 from models import Model
 from config import DATA_DIR
+from common.logging import LOG
+import config
 
 
 class MLPModel(Model):
     def __init__(self):
-        self.metadata = None
         self.clusters = None
-        self.lr = 0.01
-        self.momentum = 0.9
-        self.clip_value = 1.
+        self.lr = config.lr
+        self.momentum = config.momentum
+        self.clip_value = config.clip_value
         self.model = None
-        self.embedding_dim = 10
-        self.batch_size = 200
-        self.n_epochs = 1
+        self.embedding_dim = config.embedding_dim
+        self.batch_size = config.batch_size
+        self.n_epochs = config.n_epochs
         self.X_train, self.Y_train = None, None
         self.X_valid, self.Y_valid = None, None
         self.X_test, self.Y_test = None, None
@@ -35,6 +36,10 @@ class MLPModel(Model):
         self.X_train, self.Y_train = data.X_train, data.Y_train
         self.X_valid, self.Y_valid = data.X_valid, data.Y_valid
         self.X_test, self.Y_test = data.X_test, data.Y_test
+        self.metadata = data.get_metadata
+
+    def set_clusters(self, clusters):
+        self.clusters = clusters
 
     @staticmethod
     def start_new_session():
@@ -53,7 +58,7 @@ class MLPModel(Model):
             json_file.write(model_json)
 
         self.model.save_weights(DATA_DIR + "cache/model.h5")
-        print("Saved model to disk")
+        LOG.info("Saved model to disk")
 
     def load(self, model_prefix='latest'):
         json_file = open(DATA_DIR + 'cache/{}-model.json'.format(model_prefix), 'r')
@@ -61,7 +66,7 @@ class MLPModel(Model):
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
         loaded_model.load_weights(DATA_DIR + "cache/{}-model.h5".format(model_prefix))
-        print("Loaded model from disk")
+        LOG.info("Loaded model from disk")
 
         return loaded_model
 
@@ -114,10 +119,10 @@ class MLPModel(Model):
 
         self.model.add(Activation(destination))
         optimizer = SGD(lr=0.01, momentum=0.9, clipvalue=1.)
-        self.model.compile(loss=haversine(tensor=True), optimizer=optimizer)
+        self.model.compile(loss=haversine_tf, optimizer=optimizer)
 
     def fit(self, model_prefix="model-1"):
-        print("Training......")
+        LOG.info("Training......")
         callbacks = []
         if model_prefix is not None:
             file_path = DATA_DIR + "cache/%s-{epoch:03d}-{val_loss:.4f}.hdf5" % model_prefix
@@ -125,17 +130,17 @@ class MLPModel(Model):
                 ModelCheckpoint(file_path, monitor='val_loss', mode='min', save_weights_only=True, verbose=1))
 
         MLPModel.start_new_session()
-        print("Session created")
+        LOG.info("Session created")
 
-        print("Starting Training.....")
+        LOG.info("Starting Training.....")
         history = self.model.fit(
             self.X_train, self.Y_train,
             epochs=self.n_epochs, batch_size=self.batch_size, validation_data=(self.X_valid, self.Y_valid),
             callbacks=callbacks)
-        print("Training Completed")
+        LOG.info("Training Completed")
 
         if model_prefix is not None:
             file_path = DATA_DIR + 'cache/%s-history.pickle' % model_prefix
             with open(file_path, 'wb') as handle:
                 pickle.dump(history.history, handle, protocol=pickle.HIGHEST_PROTOCOL)
-        print("Training Completed")
+        LOG.info("Training Completed")
