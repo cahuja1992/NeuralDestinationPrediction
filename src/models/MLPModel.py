@@ -15,6 +15,7 @@ from common.utils import haversine
 from models import Model
 from config import DATA_DIR
 
+
 class MLPModel(Model):
     def __init__(self):
         self.metadata = None
@@ -48,18 +49,18 @@ class MLPModel(Model):
 
     def save(self, model_prefix='model'):
         model_json = self.model.to_json()
-        with open(DATA_DIR+"cache/model.json", "w") as json_file:
+        with open(DATA_DIR + "cache/model.json", "w") as json_file:
             json_file.write(model_json)
 
-        self.model.save_weights(DATA_DIR+"cache/model.h5")
+        self.model.save_weights(DATA_DIR + "cache/model.h5")
         print("Saved model to disk")
 
     def load(self, model_prefix='latest'):
-        json_file = open(DATA_DIR+'cache/{}-model.json'.format(model_prefix), 'r')
+        json_file = open(DATA_DIR + 'cache/{}-model.json'.format(model_prefix), 'r')
         loaded_model_json = json_file.read()
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
-        loaded_model.load_weights(DATA_DIR+"cache/{}-model.h5".format(model_prefix))
+        loaded_model.load_weights(DATA_DIR + "cache/{}-model.h5".format(model_prefix))
         print("Loaded model from disk")
 
         return loaded_model
@@ -119,7 +120,7 @@ class MLPModel(Model):
         print("Training......")
         callbacks = []
         if model_prefix is not None:
-            file_path = DATA_DIR+"cache/%s-{epoch:03d}-{val_loss:.4f}.hdf5" % model_prefix
+            file_path = DATA_DIR + "cache/%s-{epoch:03d}-{val_loss:.4f}.hdf5" % model_prefix
             callbacks.append(
                 ModelCheckpoint(file_path, monitor='val_loss', mode='min', save_weights_only=True, verbose=1))
 
@@ -134,7 +135,7 @@ class MLPModel(Model):
         print("Training Completed")
 
         if model_prefix is not None:
-            file_path = DATA_DIR+'cache/%s-history.pickle' % model_prefix
+            file_path = DATA_DIR + 'cache/%s-history.pickle' % model_prefix
             with open(file_path, 'wb') as handle:
                 pickle.dump(history.history, handle, protocol=pickle.HIGHEST_PROTOCOL)
         print("Training Completed")

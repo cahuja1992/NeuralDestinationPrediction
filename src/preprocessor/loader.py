@@ -88,21 +88,22 @@ class Data:
         return df, labels
 
     @staticmethod
-    def get_features(df):
-        def first_last_k(coordinates):
-            k = 5
-            partial = [coordinates[0] for i in range(2 * k)]
-            num_coords = len(coordinates)
-            if num_coords < 2 * k:
-                partial[-num_coords:] = coordinates
-            else:
-                partial[:k] = coordinates[:k]
-                partial[-k:] = coordinates[-k:]
-            partial = np.row_stack(partial)
-            return np.array(partial).flatten()
+    def first_last_k(coords):
+        k = 5
+        partial = [coords[0] for i in range(2 * k)]
+        num_coords = len(coords)
+        if num_coords < 2 * k:
+            partial[-num_coords:] = coords
+        else:
+            partial[:k] = coords[:k]
+            partial[-k:] = coords[-k:]
+        partial = np.row_stack(partial)
+        return np.array(partial).flatten()
 
-        LOG.info("Processing features.....")
-        coords = np.row_stack(df['POLYLINE'].apply(first_last_k))
+    @staticmethod
+    def get_features(df):
+        print("Processing features.....")
+        coords = np.row_stack(df['POLYLINE'].apply(lambda x: Data.first_last_k(x)))
         latitudes = coords[:, ::2]
         coords[:, ::2] = scale(latitudes)
         longitudes = coords[:, 1::2]
@@ -139,9 +140,8 @@ class Data:
             datasets = []
             for kind in ['train', 'test']:
                 csv_file = '{0}/{1}.csv'.format(DATA_DIR, kind)
-                df = pd.read_csv(csv_file)
-                df = df[0:1000]
-		df = df[df['MISSING_DATA'] == False]
+                df = pd.read_csv(csv_file, nrows=1000)
+                df = df[df['MISSING_DATA'] == False]
                 df = df[df['POLYLINE'] != '[]']
                 df.drop('MISSING_DATA', axis=1, inplace=True)
                 df.drop('DAY_TYPE', axis=1, inplace=True)
