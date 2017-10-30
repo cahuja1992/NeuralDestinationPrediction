@@ -8,6 +8,10 @@ class Model(object):
     __metadata__ = abc.ABCMeta
 
     @abc.abstractmethod
+    def process_features(self, data_frame):
+        pass
+
+    @abc.abstractmethod
     def create_model(self):
         pass
 

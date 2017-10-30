@@ -5,7 +5,6 @@ import numpy as np
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
-from sklearn.preprocessing import scale
 
 from common.logging import LOG
 from common.utils import str_to_list
@@ -91,42 +90,6 @@ class Data:
 
         return df, labels
 
-    @staticmethod
-    def first_last_k(coords):
-        try:
-            k = 5
-            partial = [coords[0] for i in range(2 * k)]
-            num_coords = len(coords)
-            if num_coords < 2 * k:
-                partial[-num_coords:] = coords
-            else:
-                partial[:k] = coords[:k]
-                partial[-k:] = coords[-k:]
-            partial = np.row_stack(partial)
-            return np.array(partial).flatten()
-        except:
-            LOG.debug(type(coords))
-
-
-    @staticmethod
-    def get_features(df):
-        print("Processing features.....")
-        coords = np.row_stack(df['POLYLINE'].apply(lambda x: Data.first_last_k(x)))
-        latitudes = coords[:, ::2]
-        coords[:, ::2] = scale(latitudes)
-        longitudes = coords[:, 1::2]
-        coords[:, 1::2] = scale(longitudes)
-
-        return [
-            df['QUARTER_HOUR'].as_matrix(),
-            df['DAY_OF_WEEK'].as_matrix(),
-            df['WEEK_OF_YEAR'].as_matrix(),
-            df['ORIGIN_CALL_ENCODED'].as_matrix(),
-            df['TAXI_ID_ENCODED'].as_matrix(),
-            df['ORIGIN_STAND_ENCODED'].as_matrix(),
-            coords,
-        ]
-
     def load_data(self):
         if os.path.isfile(self.train_cache):
             LOG.info("Found cached data")
@@ -196,10 +159,10 @@ class Data:
 
             LOG.info("Data Transformed")
 
-        self.X_train = Data.get_features(train)
+        self.X_train = train
         self.Y_train = train_labels
-        self.X_valid = Data.get_features(validation)
+        self.X_valid = validation
         self.Y_valid = validation_labels
-        self.X_test = Data.get_features(test)
+        self.X_test = test
         self.Y_test = test_labels
         self.metadata = metadata

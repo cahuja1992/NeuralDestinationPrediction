@@ -16,10 +16,13 @@ from models import Model
 from config import DATA_DIR
 from common.logging import LOG
 import config
+import numpy as np
+from sklearn.preprocessing import scale
 
 
 class MLPModel(Model):
     def __init__(self):
+        self.metadata = None
         self.clusters = None
         self.lr = config.lr
         self.momentum = config.momentum
@@ -32,10 +35,43 @@ class MLPModel(Model):
         self.X_valid, self.Y_valid = None, None
         self.X_test, self.Y_test = None, None
 
+    def process_features(self, df):
+        def first_last_k(coords):
+            try:
+                k = 5
+                partial = [coords[0] for i in range(2 * k)]
+                num_coords = len(coords)
+                if num_coords < 2 * k:
+                    partial[-num_coords:] = coords
+                else:
+                    partial[:k] = coords[:k]
+                    partial[-k:] = coords[-k:]
+                partial = np.row_stack(partial)
+                return np.array(partial).flatten()
+            except:
+                LOG.debug(type(coords))
+
+        print("Processing features.....")
+        coords = np.row_stack(df['POLYLINE'].apply(first_last_k))
+        latitudes = coords[:, ::2]
+        coords[:, ::2] = scale(latitudes)
+        longitudes = coords[:, 1::2]
+        coords[:, 1::2] = scale(longitudes)
+
+        return [
+            df['QUARTER_HOUR'].as_matrix(),
+            df['DAY_OF_WEEK'].as_matrix(),
+            df['WEEK_OF_YEAR'].as_matrix(),
+            df['ORIGIN_CALL_ENCODED'].as_matrix(),
+            df['TAXI_ID_ENCODED'].as_matrix(),
+            df['ORIGIN_STAND_ENCODED'].as_matrix(),
+            coords,
+        ]
+
     def set_data(self, data):
-        self.X_train, self.Y_train = data.X_train, data.Y_train
-        self.X_valid, self.Y_valid = data.X_valid, data.Y_valid
-        self.X_test, self.Y_test = data.X_test, data.Y_test
+        self.X_train, self.Y_train = MLPModel.process_features(data.X_train), data.Y_train
+        self.X_valid, self.Y_valid = MLPModel.process_features(data.X_valid), data.Y_valid
+        self.X_test, self.Y_test = MLPModel.process_features(data.X_test), data.Y_test
         self.metadata = data.get_metadata
 
     def set_clusters(self, clusters):
