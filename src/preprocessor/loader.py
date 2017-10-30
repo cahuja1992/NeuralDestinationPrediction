@@ -140,7 +140,8 @@ class Data:
             for kind in ['train', 'test']:
                 csv_file = '{0}/{1}.csv'.format(DATA_DIR, kind)
                 df = pd.read_csv(csv_file)
-                df = df[df['MISSING_DATA'] == False]
+                df = df[0:1000]
+		df = df[df['MISSING_DATA'] == False]
                 df = df[df['POLYLINE'] != '[]']
                 df.drop('MISSING_DATA', axis=1, inplace=True)
                 df.drop('DAY_TYPE', axis=1, inplace=True)
