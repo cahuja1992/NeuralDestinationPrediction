@@ -14,14 +14,14 @@ from config import DATA_DIR
 
 class Data:
     def __init__(self):
-        self.train_cache = 'cache/train.pickle'
-        self.train_labels_cache = 'cache/train-labels.npy'
-        self.validation_cache = 'cache/validation.pickle'
-        self.validation_labels_cache = 'cache/validation-labels.npy'
-        self.test_cache = 'cache/test.pickle'
-        self.test_labels_cache = 'cache/test-labels.npy'
-        self.competition_test_cache = 'cache/competition-test.pickle'
-        self.metadata_cache = 'cache/metadata.pickle'
+        self.train_cache = DATA_DIR+'cache/train.pickle'
+        self.train_labels_cache = DATA_DIR+'cache/train-labels.npy'
+        self.validation_cache = DATA_DIR+'cache/validation.pickle'
+        self.validation_labels_cache = DATA_DIR+'cache/validation-labels.npy'
+        self.test_cache = DATA_DIR+'cache/test.pickle'
+        self.test_labels_cache = DATA_DIR+'cache/test-labels.npy'
+        self.competition_test_cache = DATA_DIR+'cache/competition-test.pickle'
+        self.metadata_cache = DATA_DIR+'cache/metadata.pickle'
 
         self.X_train = None
         self.Y_train = None

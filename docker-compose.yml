@@ -7,11 +7,11 @@ services:
     image: destination-pred/app
     stdin_open: true
     volumes:
-    - modeldata
+    - modeldata:/modeldata
     tty: true
 
   train:
     image: destination-pred/model
     stdin_open: true
     volumes:
-    - trainingdata
+    - trainingdata:/trainingdata
