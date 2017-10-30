@@ -148,7 +148,7 @@ class Data:
             datasets = []
             for kind in ['train', 'test']:
                 csv_file = '{0}/trainingdata/{1}.csv'.format(DATA_DIR, kind)
-                df = pd.read_csv(csv_file, nrows=1000)
+                df = pd.read_csv(csv_file)
                 df = df[df['MISSING_DATA'] == False]
                 df = df[df['POLYLINE'] != '[]']
                 df.drop('MISSING_DATA', axis=1, inplace=True)

@@ -8,7 +8,7 @@ lr = 0.01
 momentum = 0.9
 clip_value = 1.
 batch_size = 200
-n_epochs = 1
+n_epochs = 10
 
 # HyperParameters for MLP
 embedding_dim = 10
