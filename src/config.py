@@ -1,7 +1,7 @@
 import os
 
 ROOT_DIR = os.getenv("DESTPRED_HOME")
-DATA_DIR = os.getenv('DESTPRED_DATA', '/data/trainingdata/')
+DATA_DIR = os.getenv('DESTPRED_DATA', '/data/')
 
 # HyperParameters for Optimizer
 lr = 0.01
