@@ -8,14 +8,14 @@ from preprocessor.loader import Data
 
 def arg_parser():
     params = dict()
-    myopts, args = getopt.getopt(sys.argv[1:], "i:o:")
+    myopts, args = getopt.getopt(sys.argv[1:], "t:m:")
     params['is_train'] = False
 
     for o, a in myopts:
         if o == '-m':
             params['model_name'] = a
         elif o == '-t':
-            params['is_train'] = a
+            params['is_train'] = True if a=='train' else False
         else:
             print("Usage: %s -m input -o output" % sys.argv[0])
 
