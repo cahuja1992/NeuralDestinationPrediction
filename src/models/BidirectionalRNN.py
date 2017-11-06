@@ -16,7 +16,7 @@ import numpy as np
 from common.logging import LOG
 
 
-class RNNModel(Model):
+class BidirectionalRNN(Model):
     def __init__(self):
         self.clusters = None
         self.lr = config.lr

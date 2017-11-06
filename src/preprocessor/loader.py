@@ -13,6 +13,7 @@ from config import DATA_DIR
 
 class Data:
     def __init__(self):
+        # self.POLY_FEATURE = 'GRID_POLYLINE' if is_grid else 'POLYLINE'
         self.train_cache = DATA_DIR+'cache/train.pickle'
         self.train_labels_cache = DATA_DIR+'cache/train-labels.npy'
         self.validation_cache = DATA_DIR+'cache/validation.pickle'
