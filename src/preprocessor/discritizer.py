@@ -158,6 +158,18 @@ class Grid:
 
         return ax
 
+    def to_img(self):
+        I = np.full([N, M], 255, dtype='int32')
+        for x in range(N):
+            for y in range(M):
+                for lon, lat in self.grid:
+                    if x == lon and y == lat:
+                        I[x, y] = 255 // 2
+                    if x == self.grid[-1][0] and y == self.grid[-1][1]:
+                        I[x, y] = 0
+
+        return I.flatten()
+
 
 if __name__ == "__main__":
 
@@ -191,7 +203,8 @@ if __name__ == "__main__":
         # Compute the grid representations of these trips
         chunk["GRID_POLYLINE"] = chunk["POLYLINE"].map(to_grid)
 
-        # Transform into a string
+        chunk["IMAGE"] = chunk["GRID_POLYLINE"].map(lambda x: x.to_img())
+
         chunk["GRID_POLYLINE"] = chunk["GRID_POLYLINE"].map(lambda x: x.grid_to_string())
 
         # Append data to a csv file
