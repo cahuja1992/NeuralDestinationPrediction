@@ -9,7 +9,7 @@ dill==0.2.7.1
 entrypoints==0.2.3
 ftfy==4.4.3
 h5py==2.7.1
-html5lib==0.9999999
+html5lib==0.99999999
 idna==2.6
 ipykernel==4.6.1
 ipython==6.2.1
